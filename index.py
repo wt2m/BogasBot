@@ -18,9 +18,14 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
+
+    # Evitar ler as próprias mensagens
     if message.author == bot.user:
         return
+    
     lowerMessage = message.content.lower();
+
+    # Roubar gifs enviados no xet
     try:
         extension = requests.head(message.content).headers['Content-Type'];
         if extension == "image/gif":
@@ -33,7 +38,6 @@ async def on_message(message):
             else:
                 fileObj = open("utils\gifs.txt")
                 old = fileObj.read();
-                print(old);
                 fileObj = open("utils\gifs.txt", "w")
                 fileObj.write(old)
                 fileObj.write(f"{message.content}\n")
@@ -44,43 +48,67 @@ async def on_message(message):
     except:
         NullHandler
                 
-        
+    
+    # Xingar o gamer a toa
     if message.author.id == 359163391375441920:
         r = random.randint(0,50)
         if r == 21:
             await message.reply("Vai se fude gamer fedorento")
         if r == 40:
             await message.reply("https://tenor.com/view/aaaaa-aaaaaaa-shout-yell-rat-gif-14860400")
+
+    # Diminuir menções ao Hiro
     if "Hiro" in message.content:
         await message.reply(
             f"Por favor, {message.author.name}, quica na minha pica e nunca mais cite esse random odiador de pobres!"
         )
+    # Caso me pinguem ou me chamem responder automático
+    if message.author.id != 204350761616932865:
+        mention = False
+        try:
+            mentions = message.mentions
+            for m in mentions:
+                if 204350761616932865 == m.id:
+                    mention = True  
+        except:
+            NullHandler
+        if "boga" in lowerMessage or "bogas" in lowerMessage or "mogas" in lowerMessage or "moguives" in lowerMessage or "boguives" in lowerMessage or "miguel" in lowerMessage or mention == True:
+            replies = [
+                'Oi, eu sou o atendente dele e vou responder por ele',
+                'Bom dia, para de encher o saco',
+                'Oi, ele tá ocupado gadando a pietra',
+                'não, ele não vai ler sua mensagem',
+                'Tá ocupado jogando dbd, pede pra namorada dele passar a informação',
+                ':flushed:',
+                'É pra chamar pra jogar dbd? Sim? Bora. É pra falar do servidor? Sim? Vai se foder.',
+                'Se ele não tá na call ou ele tá trabaiando ou gadando, não enche',
+                'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa para de me pingaaaaaaaaaa',
+                '>:C',
+                'Oi galera do frifaire, fale com o bot pessoal do boga',
+                'Foda-se se o servidor caiu alalalalalala',
+                'Meu zap é (37) 98835-2002 me chama lá que semana q vem eu te respondo',
+                'sz',
+                'To seno tunelado relppppppp 2 gancho 2 minutooooooo',
+                'Oi caralhooOoOoO aaaaaaaaaaaaaaa',
+                'Fodase?',
+                'Sim, eu como terra, como descobriu?',
+                'dando a foda fora :wind_blowing_face: :wind_blowing_face: :wind_blowing_face: ',
+                '†☺☼♀♂♠♣♥♦♪♫†☺☼♀♂♠♣♥♦♪♫†☺☼♀♂♠♣♥♦♪♫†☺☼♀♂♠♣♥♦♪♫†☺☼♀♂♠♣♥♦♪♫†☺☼♀♂♠♣♥♦♪♫†☺☼♀♂♠♣♥♦♪♫',
+                'Não sei, pergunta pro <@442076414800298009>'
+            ]
+            r = random.randint(0, len(replies))
+            await message.reply(f"{replies[r]}")
     
-    if "bogas" in lowerMessage or "mogas"  in lowerMessage or "moguives"  in lowerMessage or "boguives"  in lowerMessage or "miguel" or '204350761616932865' in message.mentions.members:
-        replies = [
-            'Oi, eu sou o atendente dele e vou responder por ele',
-            'Bom dia, para de encher o saco',
-            'Oi, ele tá ocupado gadando a pietra',
-            'não, ele não vai ler sua mensagem',
-            'Tá ocupado jogando dbd, pede pra namorada dele passar a informação',
-            ':flushed:',
-            'É pra chamar pra jogar dbd? Sim? Bora. É pra falar do servidor? Sim? Vai se foder.',
-            'Se ele não tá na call ou ele tá trabaiando ou gadando, não enche',
-            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa para de me pingaaaaaaaaaa',
-            '>:C',
-            'Oi galera do frifaire, fale com o bot pessoal do boga',
-            'Foda-se se o servidor caiu alalalalalala',
-            'Meu zap é (37) 98835-2002 me chama lá que semana q vem eu te respondo',
-            'sz'
-        ]
-        r = random.randint(0, len(replies))
-        await message.reply(f"{replies[r]}")
+    # Função meme pro bot mandar o povo calar a boca
     r = random.randint(0,400)
     if r == 321:
         await message.channel.send(
             "aaaaaaaaaaaaaaaa cala a bocaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         )
     await bot.process_commands(message)
+
+
+# ------------------------ COMANDOS ---------------------------
 
 @bot.command(name="msg")
 async def send_msg(ctx):
@@ -103,7 +131,6 @@ async def send_gifs(ctx):
 async def add_gif(ctx, *, arg):
     fileObj = open("utils\gifs.txt")
     old = fileObj.read();
-    print(old);
     fileObj = open("utils\gifs.txt", "w")
     fileObj.write(old)
     fileObj.write(f"{arg}\n")
@@ -174,6 +201,10 @@ async def inconvenientes_list(ctx):
 @bot.command(name="git")
 async def send_git(ctx):
     await ctx.send('https://github.com/wt2m/BogasBot')
+
+@bot.command(name="commands")
+async def commands(ctx):
+    await ctx.send('Tem os comando gif, gifs, addgif, inconveniente <nome>, inconvenientes, git e msg. Se vira pra descobrir oq cada uma faz ;D ')
 
 bot.run(os.getenv('DISCORD_BOT_TOKEN'))
 
