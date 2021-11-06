@@ -1,10 +1,12 @@
 from asyncio.windows_events import NULL
+from logging import NullHandler
 import discord
 from discord.ext import commands
 import json
 import dotenv
 import os
 import random
+import requests
 
 dotenv.load_dotenv(dotenv.find_dotenv());
 
@@ -18,8 +20,30 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    '''if message.author.id == 204350761616932865:
-        await message.reply("https://tenor.com/view/femboy-skirt-maid-outift-maid-outfit-gif-21382375")'''
+    lowerMessage = message.content.lower();
+    try:
+        extension = requests.head(message.content).headers['Content-Type'];
+        if extension == "image/gif":
+            fileObj = open('utils\gifs.txt', "r")
+            gifs = fileObj.read().splitlines() #puts the file into an array
+            fileObj.close()
+            
+            if message.content in gifs:
+                NullHandler
+            else:
+                fileObj = open("utils\gifs.txt")
+                old = fileObj.read();
+                print(old);
+                fileObj = open("utils\gifs.txt", "w")
+                fileObj.write(old)
+                fileObj.write(f"{message.content}\n")
+                fileObj.close()
+                await message.reply('Your gif got **NHOINC**ed')
+
+        
+    except:
+        NullHandler
+                
         
     if message.author.id == 359163391375441920:
         r = random.randint(0,50)
@@ -31,6 +55,26 @@ async def on_message(message):
         await message.reply(
             f"Por favor, {message.author.name}, quica na minha pica e nunca mais cite esse random odiador de pobres!"
         )
+    
+    if "bogas" in lowerMessage or "mogas"  in lowerMessage or "moguives"  in lowerMessage or "boguives"  in lowerMessage or "miguel" or '204350761616932865' in message.mentions.members:
+        replies = [
+            'Oi, eu sou o atendente dele e vou responder por ele',
+            'Bom dia, para de encher o saco',
+            'Oi, ele tá ocupado gadando a pietra',
+            'não, ele não vai ler sua mensagem',
+            'Tá ocupado jogando dbd, pede pra namorada dele passar a informação',
+            ':flushed:',
+            'É pra chamar pra jogar dbd? Sim? Bora. É pra falar do servidor? Sim? Vai se foder.',
+            'Se ele não tá na call ou ele tá trabaiando ou gadando, não enche',
+            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa para de me pingaaaaaaaaaa',
+            '>:C',
+            'Oi galera do frifaire, fale com o bot pessoal do boga',
+            'Foda-se se o servidor caiu alalalalalala',
+            'Meu zap é (37) 98835-2002 me chama lá que semana q vem eu te respondo',
+            'sz'
+        ]
+        r = random.randint(0, len(replies))
+        await message.reply(f"{replies[r]}")
     r = random.randint(0,400)
     if r == 321:
         await message.channel.send(
@@ -65,6 +109,16 @@ async def add_gif(ctx, *, arg):
     fileObj.write(f"{arg}\n")
     fileObj.close()
     await ctx.message.reply('Armazenado meu truta')
+
+@bot.command(name="gif")
+async def send_gif(ctx):
+    fileObj = open('utils\gifs.txt', "r")
+    gifs = fileObj.read().splitlines() #puts the file into an array
+    fileObj.close()
+    lenGifs = len(gifs) - 1
+    r = random.randint(0, lenGifs)
+    await ctx.message.reply(gifs[r])
+
 
 with open('utils\inconvenientes.json') as f:
     inconvenientes = json.load(f)
@@ -116,4 +170,11 @@ async def inconvenientes_list(ctx):
         qnt = inc['qnt']
         embed.add_field(name=f"**{nome}**", value=f"O sequelado já retardou {qnt} vezes", inline=True)
     await ctx.send(embed=embed)
+
+@bot.command(name="git")
+async def send_git(ctx):
+    await ctx.send('https://github.com/wt2m/BogasBot')
+
 bot.run(os.getenv('DISCORD_BOT_TOKEN'))
+
+    
