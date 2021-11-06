@@ -5,8 +5,11 @@ from discord.ext import commands
 import json
 import dotenv
 import os
+from os import walk
 import random
 import requests
+import shutil
+
 
 dotenv.load_dotenv(dotenv.find_dotenv());
 
@@ -98,6 +101,19 @@ async def on_message(message):
             ]
             r = random.randint(0, len(replies))
             await message.reply(f"{replies[r]}")
+    
+    #Funções pra responder a pipas
+    if message.author.id == 361675337811230725:
+        if "vida" in lowerMessage:
+            await message.reply("Oi vidaahahah te amo  :fallen_leaf: :fallen_leaf: ")
+            await message.reply("https://tenor.com/view/saudades-meu-amor-heart-love-couple-in-love-gif-16336939")
+        r = random.radint(0, 30)
+        if r == 23:
+            await message.reply("Oi bebê")
+        if "bebe" in lowerMessage:
+            await message.reply ("Oi :flushed:")
+        if "casa" in lowerMessage or "casar" in lowerMessage:
+            await message.reply ("Sim, eu quero casa co vc <@361675337811230725>")
     
     # Função meme pro bot mandar o povo calar a boca
     r = random.randint(0,400)
@@ -198,6 +214,48 @@ async def inconvenientes_list(ctx):
         embed.add_field(name=f"**{nome}**", value=f"O sequelado já retardou {qnt} vezes", inline=True)
     await ctx.send(embed=embed)
 
+@bot.command(name="video", pass_context=True)
+async def send_video(ctx):
+    filenames = next(walk("videos"), (None, None, []))[2]
+    split = ctx.message.content.split(" ")
+    if len(split) == 1:
+        text = ""
+        for file in filenames:
+            if text == "":
+                text = f"{file}"
+            else:
+                text += f"\n{file}"
+        embed=discord.Embed(
+            #title="Lista de inconvenientes xD",
+            #url="https://realdrewdata.medium.com/",
+            description=f"{text}",
+            color=discord.Color.blue())
+        embed.set_footer(text="bg!video <video_name>")
+        await ctx.message.reply(embed=embed)
+    else:
+        if len(split) == 2:
+            if split[1] in filenames:
+                await ctx.message.reply(file=discord.File(f'videos\{split[1]}'))
+            else:
+                await ctx.message.reply("Erro inesperado. Video não encontrado no sistema.")
+        else:
+            await ctx.message.reply("Erro inesperado. Mais de um parâmetro enviado.")
+
+@bot.command(name="addvideo", pass_context=True)
+async def save_video(ctx):
+    filenames = next(walk("videos"), (None, None, []))[2]         
+    if(len(ctx.message.attachments) > 0):
+        if ctx.message.attachments[0].filename in filenames:
+            await ctx.message.reply("Vídeo com mesmo nome já cadastrado!")
+        else:        
+            print(ctx.message.attachments[0].url)
+            r = requests.get(ctx.message.attachments[0].url, stream=True)
+            with open(f"videos\{ctx.message.attachments[0].filename}", 'wb') as out_file:
+                print('Saving image: ' + ctx.message.attachments[0].filename)
+                shutil.copyfileobj(r.raw, out_file) 
+            await ctx.message.reply("Vídeo cadastrado!") 
+            
+
 @bot.command(name="git")
 async def send_git(ctx):
     await ctx.send('https://github.com/wt2m/BogasBot')
@@ -205,6 +263,8 @@ async def send_git(ctx):
 @bot.command(name="commands")
 async def commands(ctx):
     await ctx.send('Tem os comando gif, gifs, addgif, inconveniente <nome>, inconvenientes, git e msg. Se vira pra descobrir oq cada uma faz ;D ')
+
+
 
 bot.run(os.getenv('DISCORD_BOT_TOKEN'))
 
