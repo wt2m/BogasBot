@@ -9,6 +9,8 @@ from os import walk
 import random
 import requests
 import shutil
+import TenGiphPy
+
 
 
 dotenv.load_dotenv(dotenv.find_dotenv());
@@ -31,20 +33,21 @@ async def on_message(message):
     # Roubar gifs enviados no xet
     try:
         extension = requests.head(message.content).headers['Content-Type'];
-        if extension == "image/gif":
-            fileObj = open('utils\gifs.txt', "r")
+        print(extension)
+        if extension == "image/gif" or message.content.find("https://tenor.com/view") != -1:
+            fileObj = open('data\gifs.txt', "r")
             gifs = fileObj.read().splitlines() #puts the file into an array
             fileObj.close()
             
             if message.content in gifs:
                 NullHandler
             else:
-                fileObj = open("utils\gifs.txt")
+                fileObj = open("data\gifs.txt")
                 old = fileObj.read();
-                fileObj = open("utils\gifs.txt", "w")
+                fileObj = open("data\gifs.txt", "w")
                 fileObj.write(old)
                 fileObj.write(f"{message.content}\n")
-                fileObj.close()
+                fileObj.close()   
                 await message.reply('Your gif got **NHOINC**ed')
 
         
@@ -107,7 +110,7 @@ async def on_message(message):
         if "vida" in lowerMessage:
             await message.reply("Oi vidaahahah te amo  :fallen_leaf: :fallen_leaf: ")
             await message.reply("https://tenor.com/view/saudades-meu-amor-heart-love-couple-in-love-gif-16336939")
-        r = random.radint(0, 30)
+        r = random.randint(0, 30)
         if r == 23:
             await message.reply("Oi bebê")
         if "bebe" in lowerMessage:
@@ -136,7 +139,7 @@ async def send_msg(ctx):
 
 @bot.command(name="gifs")
 async def send_gifs(ctx):
-    fileObj = open('utils\gifs.txt', "r") #opens the file in read mode
+    fileObj = open('data\gifs.txt', "r") #opens the file in read mode
     gifs = fileObj.read().splitlines() #puts the file into an array
     fileObj.close()
     
@@ -145,9 +148,9 @@ async def send_gifs(ctx):
 
 @bot.command(name="addgif")
 async def add_gif(ctx, *, arg):
-    fileObj = open("utils\gifs.txt")
+    fileObj = open("data\gifs.txt")
     old = fileObj.read();
-    fileObj = open("utils\gifs.txt", "w")
+    fileObj = open("data\gifs.txt", "w")
     fileObj.write(old)
     fileObj.write(f"{arg}\n")
     fileObj.close()
@@ -155,7 +158,7 @@ async def add_gif(ctx, *, arg):
 
 @bot.command(name="gif")
 async def send_gif(ctx):
-    fileObj = open('utils\gifs.txt', "r")
+    fileObj = open('data\gifs.txt', "r")
     gifs = fileObj.read().splitlines() #puts the file into an array
     fileObj.close()
     lenGifs = len(gifs) - 1
@@ -163,7 +166,7 @@ async def send_gif(ctx):
     await ctx.message.reply(gifs[r])
 
 
-with open('utils\inconvenientes.json') as f:
+with open('data\inconvenientes.json') as f:
     inconvenientes = json.load(f)
 
 @bot.command(name="inconveniente")
@@ -191,7 +194,7 @@ async def inconveniente(ctx, *, arg):
             await ctx.send('Inconveniente adicionado a lista de inconvenientes :))')
 
         jsonString = json.dumps(inconvenientes)
-        jsonFile = open("utils\inconvenientes.json", "w")
+        jsonFile = open("data\inconvenientes.json", "w")
         jsonFile.write(jsonString)
         jsonFile.close()
 
