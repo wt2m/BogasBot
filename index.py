@@ -9,7 +9,6 @@ from os import walk
 import random
 import requests
 import shutil
-import TenGiphPy
 
 
 
@@ -33,12 +32,10 @@ async def on_message(message):
     # Roubar gifs enviados no xet
     try:
         extension = requests.head(message.content).headers['Content-Type'];
-        print(extension)
-        if extension == "image/gif" or message.content.find("https://tenor.com/view") != -1:
+        if extension == "image/gif" or message.content.find("tenor.com/view") != -1:
             fileObj = open('data\gifs.txt', "r")
             gifs = fileObj.read().splitlines() #puts the file into an array
             fileObj.close()
-            
             if message.content in gifs:
                 NullHandler
             else:
@@ -104,6 +101,38 @@ async def on_message(message):
             ]
             r = random.randint(0, len(replies))
             await message.reply(f"{replies[r]}")
+            
+            #Counter
+            aux = True
+            with open('data\pings.json') as f:
+                pings = json.load(f)
+                
+            for ping in pings:
+                pingAUX = json.loads(ping)
+            if pingAUX['nome'] == 'cobrafazmiau':
+                pingAUX['qnt'] += 1
+                pings.remove(ping)
+                pings.append(json.dumps(pingAUX))
+                aux = False
+            
+            if aux:
+                jsonPing = {
+                "nome": 'cobrafazmiau',
+                "qnt": 1
+                }
+                pings.append(json.dumps(jsonPing))
+                
+            jsonString = json.dumps(pings)
+            jsonFile = open("data\pings.json", "w")
+            jsonFile.write(jsonString)
+            jsonFile.close()
+            
+            #remove ping
+            if mention:
+                await message.delete()
+            
+
+        
     
     #Funções pra responder a pipas
     if message.author.id == 361675337811230725:
@@ -148,13 +177,17 @@ async def send_gifs(ctx):
 
 @bot.command(name="addgif")
 async def add_gif(ctx, *, arg):
-    fileObj = open("data\gifs.txt")
+    fileObj = open("data\gifs.txt", "r")
     old = fileObj.read();
-    fileObj = open("data\gifs.txt", "w")
-    fileObj.write(old)
-    fileObj.write(f"{arg}\n")
     fileObj.close()
-    await ctx.message.reply('Armazenado meu truta')
+    if arg in old:
+        await ctx.message.reply("Esse gif já tá salvo burrão")
+    else:
+        fileObj = open("data\gifs.txt", "w")
+        fileObj.write(old)
+        fileObj.write(f"{arg}\n")
+        fileObj.close()
+        await ctx.message.reply('Armazenado meu truta')
 
 @bot.command(name="gif")
 async def send_gif(ctx):
@@ -262,7 +295,28 @@ async def save_video(ctx):
 @bot.command(name="git")
 async def send_git(ctx):
     await ctx.send('https://github.com/wt2m/BogasBot')
-
+    
+@bot.command(name="spamPing")
+async def spam_ping(ctx):
+    mention = False
+    try:
+        mentions = ctx.message.mentions
+        for m in mentions:
+            mention = m 
+    except:
+        NullHandler
+    if mention != False:
+        if mention == 204350761616932865:
+            for x in range(0, 50):
+                await ctx.send(f'<@{ctx.message.author.id}>')
+            await ctx.message.reply('Sério que tu tentou usar meu bot pra me pingar? Macaco d+')
+        else:
+            for x in range(0, 50):
+                await ctx.send(f'oi {mention.mention}')
+    else: 
+        await ctx.message.reply('Pinga alguém burrão')
+    
+        
 @bot.command(name="commands")
 async def commands(ctx):
     await ctx.send('Tem os comando gif, gifs, addgif, inconveniente <nome>, inconvenientes, git e msg. Se vira pra descobrir oq cada uma faz ;D ')
@@ -271,4 +325,3 @@ async def commands(ctx):
 
 bot.run(os.getenv('DISCORD_BOT_TOKEN'))
 
-    
