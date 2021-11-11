@@ -19,7 +19,13 @@ bot = commands.Bot("bg!")
 @bot.event
 async def on_ready():
     print("Bot iniciado!!")
+    #RPC
+    await bot.change_presence(activity=discord.Game(name="e cheirando pó"))
 
+
+
+
+#Ao receber mensagens
 @bot.event
 async def on_message(message):
 
@@ -316,12 +322,27 @@ async def spam_ping(ctx):
     else: 
         await ctx.message.reply('Pinga alguém burrão')
     
+
+@bot.command(name="MCserver")
+async def mc_server(ctx):
+    response = requests.get("https://api.mcsrvstat.us/2/br7.purplehost.com.br:10359");
+    serverInfo = response.json()
+    players = f"Playerlist: "
+    for player in serverInfo['players']['list']:
+        players += f"\n{player}"
+    '''icon = ":red_circle:"
+    if serverInfo['online']:
+        icon = ":green_circle:"'''
+    embed=discord.Embed(
+    title=  serverInfo['motd']['clean'][0] + " [" + str(serverInfo['players']['online']) +"/"+ str(serverInfo['players']['max']) + "]",
+        description=players,
+        color= discord.Color.green() if serverInfo['online'] else discord.Color.red())
+    embed.set_footer(text="Online: " + str(serverInfo['online']))
+    await ctx.send(embed=embed)
         
 @bot.command(name="commands")
 async def commands(ctx):
     await ctx.send('Tem os comando gif, gifs, addgif, inconveniente <nome>, inconvenientes, git e msg. Se vira pra descobrir oq cada uma faz ;D ')
-
-
 
 bot.run(os.getenv('DISCORD_BOT_TOKEN'))
 
